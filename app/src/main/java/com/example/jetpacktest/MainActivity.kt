@@ -1,19 +1,16 @@
 package com.example.jetpacktest
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocal
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.ProvidableCompositionLocal
-import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.platform.LocalContext
+import com.example.jetpacktest.States.StateViewModel
 
-
-
-val Name: ProvidableCompositionLocal<String> = compositionLocalOf{"Atul"};
 
 class MainActivity : ComponentActivity() {
 
@@ -22,7 +19,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
 
-            MyApp()
+            val viewModel=StateViewModel()
+            MyApp(viewModel)
                 
             }
 
@@ -30,28 +28,47 @@ class MainActivity : ComponentActivity() {
     }
 
         @Composable
-        fun MyApp() {
-            Column() {
-                CompositionLocalProvider(Name provides "Tikku" ) {
-                    Greeting()
-                }
+        fun MyApp(viewModel: StateViewModel) {
+            Column {
+                Greeting(viewModel)
 
-                SecondGreeting()
+                SecondGreeting(viewModel)
             }
 
         }
 
 @Composable
-fun Greeting(){
+fun Greeting(viewModel: StateViewModel){
+    val context= LocalContext.current
+    println("rendered first greeting")
     Column() {
-        Text("hello ${Name.current}")
+        Text("hello ${viewModel.name.value}")
+        Button(onClick = {
+
+            if(viewModel.name.value=="Tikku"){
+                viewModel.updateName("Mridula")
+            }
+            else{
+                viewModel.updateName("Tikku")
+            }
+
+        }) {
+            Text("Change Name")
+        }
         //SecondGreeting()
     }
 
 }
 
 @Composable
-fun SecondGreeting() {
-    Text("bye ${Name.current}")
+fun SecondGreeting(viewModel: StateViewModel) {
+    println("rendered second greeting")
+    Text("bye ${viewModel.age.value}")
+    Button(onClick = {
+        viewModel.incAge()
+    }) {
+
+        Text("Add age")
+    }
 }
 
